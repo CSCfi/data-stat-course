@@ -10,8 +10,6 @@ height = np.concatenate((height, [None for _ in range(5)], ["E" for _ in range(5
 diam = np.concatenate((diam, [None for _ in range(100)]))
 height[0] = 540
 
-print height.size
-
 treeID = [str(x) for x in np.random.randint(100001, 300100, 1000)]
 plotID = [x[:4] for x in treeID]
 treeID = [x[-2:] for x in treeID]
@@ -25,8 +23,6 @@ faketrees['species'] = species
 faketrees['height'] = height
 faketrees['diam'] = diam
 
-print faketrees.index.size
-print faketrees.size
 rows = random.sample(faketrees.index, faketrees.index.size)
 faketrees = faketrees.ix[rows]
 faketrees.to_csv("faketrees.csv", na_rep="")
