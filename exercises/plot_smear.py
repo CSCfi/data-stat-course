@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as pl
 
-
 smear = pd.read_csv(
     "../datasets/weather-kumpula.csv",
     header=0,
