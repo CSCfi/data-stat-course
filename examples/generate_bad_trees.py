@@ -13,9 +13,8 @@ height[0] = 540
 treeID = [str(x) for x in np.random.randint(100001, 300100, 1000)]
 plotID = [x[:4] for x in treeID]
 treeID = [x[-2:] for x in treeID]
-species = stats.rv_discrete(values=([1, 3], [0.8, 0.3])).rvs(size=1000)
+species = pd.Series(stats.rv_discrete(values=([1, 3], [0.8, 0.3])).rvs(size=1000), dtype=float)
 species[1] = 1.2
-
 faketrees = pd.DataFrame()
 faketrees['plotID'] = plotID
 faketrees['treeID'] = treeID

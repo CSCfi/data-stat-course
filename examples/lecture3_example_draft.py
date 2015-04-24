@@ -4,22 +4,25 @@
 
 import pandas as pd
 import numpy as np
+import pandas.rpy.common as com
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.style.use('ggplot')
 
 # missing values: in R, the special symbol NA, in pandas...
 # data types: in R (most important) numeric, factor, character, maybe boolean
 
-letters = [chr(x + ord('a')) for x in range(26)]
-letters.append(None)
-lettersSeries = pd.Series(letters)
-lettersCategory = pd.Series(letters, dtype='category')
+letters = np.concatenate((com.load_data('letters'), [None]))
+lettersS = pd.Series(letters)
+lettersC = pd.Series(letters, dtype='category')
 numbers = pd.Series(np.concatenate((range(1, 11), [np.nan])))
 booleans = pd.Series([True, False])
 
 fakedf = pd.DataFrame({
-    'letterCategory': lettersCategory.iloc[np.random.choice(lettersCategory.index, 300)],
-    'letterSeries': lettersSeries.iloc[np.random.choice(lettersSeries.index, 300)].reset_index()[0],
-    'number': numbers.iloc[np.random.choice(numbers.index, 300)].reset_index()[0],
-    'bool': booleans.iloc[np.random.choice(booleans.index, 300)].reset_index()[0],
+    'letterC': np.random.choice(lettersC, 300),
+    'letterS': np.random.choice(lettersS, 300),
+    'number': np.random.choice(numbers, 300),
+    'bool': np.random.choice(booleans, 300),
 })
 
 fakedf.describe()
@@ -38,7 +41,7 @@ fakedf.describe()
 
 # This will quickly show you if columns turn out to be of wrong type, or if the whole result is bogus.
 # Compare:
-iris = pd.read_csv('https://raw.github.com/pydata/pandas/master/pandas/tests/data/iris.csv')
+iris = com.load_data('iris')
 iris.to_csv("iris.csv")
 print pd.read_csv("iris.csv").describe()
 print pd.read_csv("iris.csv", sep=';', decimal=',').describe()
@@ -64,44 +67,34 @@ print faketrees['height'].describe()
 # Ways to deal with this:
 # declare all the stupid values as missing (not always plausible):
 faketrees = pd.read_csv("faketrees.csv", na_values=["-9999", "E"])
-print faketrees.describe()
-# read in as pure character, deal with it manually
-# faketrees<-read.csv("faketrees.csv",as.is=TRUE)
-# faketrees$heightn<-as.numeric(faketrees$height)
-# the warning message from that is to be expected and is allright, compare:
-# as.numeric(c("1","345.9","foo","8"))
-# faketrees$heightn<-ifelse(faketrees$heightn>0,faketrees$heightn,NA)
-# "if heightn is positive, leave it as it is, else mark it as missing
+faketrees.describe(include='all')
 
-# The other way around: from numeric to a factor
-# faketrees$speciesf<-factor(faketrees$species,labels=c("pine","spruce"))
-# uh oh! what now? it was supposed to be just 1's and 2's
-# table(faketrees$species)
-# or, maybe also
-# levels(as.factor(faketrees$species))
-# one way to deal with this:
-# faketrees$speciesf<-factor(faketrees$species,levels=1:2,labels=c("pine","spruce"))
-# summary(faketrees)
-# the extra levels become NA
+# The other way around: from numeric to a Categorical
+faketrees['speciesf'] = pd.Categorical(faketrees['species'], categories=[1, 3]).rename_categories(['pine', 'spruce']) 
+faketrees.describe(include='all')
 
 # more ways to look at missing values
 # is.na(fakedf$number)
 # sum(complete.cases(fakedf)) #how many rows have no missing values
 
+np.sum(pd.isnull(fakedf['number']))
+
 # Outliers: values can be of the correct type but still completely wrong, or just odd
 # total outliers will show up nicely in a histogram or a boxplot
-# hist(faketrees$heightn)
-# boxplot(faketrees$heightn)
+
+faketrees['height'].hist()
+faketrees['height'].plot(kind='box')
+
 # what should you do with outliers is another question entirely
 
 # barplots are nice for frequencies of categorical data
-# barplot(table(faketrees$species)) #the extra problem category is evident
-# barplot(table(faketrees$speciesf))
-# in fact this can be done even simpler with a genuine factor
-# plot(faketrees$speciesf)
+pd.value_counts(faketrees['species'], normalize=True).plot(kind='bar')
+pd.value_counts(np.asarray(faketrees['speciesf']), normalize=True).plot(kind='bar')
 
 # more quick and dirty ways to explore data visually:
 # scatterplots of two continuous variables
-# plot(heightn~diam,data=faketrees) #remember this is artificial data!
+faketrees.plot(kind='scatter', x='diam', y='height')
+
 # boxplots by category
-# boxplot(heightn~speciesf,data=faketrees) #still... the populations are equal
+faketrees.boxplot(column=['height'], by=['speciesf'])
+

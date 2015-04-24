@@ -2,60 +2,64 @@
 
 import pandas as pd
 import numpy as np
+import pandas.rpy.common as com
+import matplotlib
+import matplotlib.pyplot as plt
+matplotlib.style.use('ggplot')
+
 
 # Just a reminder, adding new variables to data frames is easy, for example:
-iris = pd.read_csv('https://raw.github.com/pydata/pandas/master/pandas/tests/data/iris.csv')
+iris = com.load_data('iris')
 iris.columns
 
-iris['SepalArea'] = iris['SepalLength'] * iris['SepalWidth']
+iris['Sepal.Area'] = iris['Sepal.Length'] * iris['Sepal.Width']
 iris.columns
-#Note that this works (only) because row order is fixed.
-#Pandas data frame is smarter in this sense
 
 # Replacing whole columns works the same way.
 # To remove a single column DataFrame objects have drop method, which returns a *new*
 # DataFrame with the chosen column dropped
-iris2 = iris.drop('SepalArea', 1)
+iris2 = iris.drop('Sepal.Area', 1)
 iris2.columns
 iris.columns
 
 # The column may be removed from a DataFrame object with del statement
-del iris['SepalArea']
+del iris['Sepal.Area']
 iris.columns
 
 # loc:  label based indexing
 # iloc: integer based indexing:
 # XXX: Remember, indexing starts from zero, ":" selects whole axis
-iris.head().iloc[:, :5] #pick just the first 5 columns
+iris.iloc[:, :5] #pick just the first 5 columns
 
 # By negative column index:
-iris.head().iloc[:, :-1] #pick everything but the last column
+iris.iloc[:, :-1] #pick everything but the last column
 
 # By column name:
-iris.head().loc[:, ["SepalLength","SepalWidth","PetalLength","PetalWidth","Species"]]
+iris.loc[:, ["Sepal.Length","Sepal.Width","Petal.Length","Petal.Width","Species"]]
 
 # Unfortunately, negative column names don't work, and there are no inverse matching.
+iris['Sepal.Area'] = iris['Sepal.Length'] * iris['Sepal.Width']
 cols = iris.columns.tolist()  # list of column names
-cols.remove('SepalArea')
-iris.head().loc[:, cols]
+cols.remove('Sepal.Area')
+iris.loc[:, cols]
 
 # Binning, or making a continuous variable in to a discrete one
 # Let's make a histogram of the sepal lengths
-plt.hist(iris$Sepal.Length)
+iris['Sepal.Length'].hist()
 plt.show()
 
-print "Values for SepalLength range from %s to %s" % (iris['SepalLength'].min(), iris['SepalLength'].max())
-iris['SepalLengthGroup'] = pd.cut(iris['SepalLength'], [0,4,5,7,8], labels=["extra small", "small","medium","large"])
+print "Values for Sepal.Length range from %s to %s" % (iris['Sepal.Length'].min(), iris['Sepal.Length'].max())
+iris['SepalLengthGroup'] = pd.cut(iris['Sepal.Length'], [0, 4, 5, 7, 8], labels=["extra small", "small", "medium", "large"])
 
-#in to 10 groups of equal width across range:
-iris['PedalLengthGroup'] = pd.cut(iris['SepalLength'], 10, include_lowest=True)
+# in to 10 groups of equal width across range:
+iris['SepalLengthGroup'] = pd.cut(iris['Sepal.Length'], 10, include_lowest=True)
 
-#in to 10 groups of (roughly) equal frequency, note: pd.qcut
-dec = pd.Series(range(0, 11))/10
-iris['PedalLengthGroup'] = pd.qcut(iris['SepalLength'], q=dec)
+# in to 10 groups of (roughly) equal frequency, note: pd.qcut
+dec = pd.Series(range(0, 11)) / 10
+iris['PedalSLLengthGroup'] = pd.qcut(iris['Sepal.Length'], q=dec)
 
 # Regrouping, or combining existing groups in to one
-animals = pd.Series(("cat","dog","flatworm","kiwi","sparrow","fruitfly","swordfish","pike","crocodile"), dtype='category')
+animals = pd.Series(("cat", "dog", "flatworm", "kiwi", "sparrow", "fruitfly", "swordfish", "pike", "crocodile"), dtype='category')
 zoo = pd.DataFrame({
     'animalID': range(50),
     'spec': np.random.choice(animals, 50),
@@ -66,7 +70,7 @@ zoo.head()
 # To classify these animals as "mammal","bird","fish","reptile","insect", you have to create pairs
 # of "old group" - "new group" one way or another.
 mammals = {'cat': 'mammal', 'dog': 'mammal'}
-zoo['class'] = zoo['spec'].apply(lambda x: animalToClass.get(x, x))
+zoo['class'] = zoo['spec'].apply(lambda x: mammals.get(x, x))
 zoo.head()
 zoo.describe()
 
@@ -83,55 +87,29 @@ zoo.describe()
 
 # Working with time stamps and strings in general
 
-# weather<-read.csv("https://raw.githubusercontent.com/CSC-IT-Center-for-Science/data-stat-course/master/datasets/weather-kumpula.csv")
+weather = pd.read_csv("../datasets/weather-kumpula.csv")
 
 # time stamp is not numeric, so it becomes a factor by default:
-# class(weather$ts)
-# could have read the data with 'as.is=TRUE' argument, or can change the factor in to corresponding strings by
-# weather$ts<-as.character(weather$ts)
-# NB! be very careful when trying to change factors in to numeric. See the warning on factor help page
+weather['ts'].dtype
 
-# Let's take the year, month and day apart and put them in the data frame as separate columns. Note that
-# this might not always be sensible, and you might want to change it to a date-time object instead. That
-# is covered soon. Here, dates serve as an example of a string.
+# Using str:
+weather['tssplit'] = weather['ts'].str.split("-")
 
-# Using strsplit:
-# ts.split<-strsplit(weather$ts,split="-")
-# The result is a list as long as long as the original character vector, whose elements are character vectors
-# containing the split parts.
-# class(ts.split)
-# ts.split[[1]]
-# In this case each element of the list of the same length so it's possible to do:
-# ts.split<-simplify2array(ts.split)
-# dim(ts.split) #year, month, day as rows
-# weather$year<-ts.split[1,]
-# weather$month<-ts.split[2,]
-# weaher$day<-ts.split[3,]
-# Now they can be changed to numeric or factor as needed
+weather['year'] = weather['tssplit'].str[0]
+weather['month'] = weather['tssplit'].str[1]
+weather['day'] = weather['tssplit'].str[2]
 
-# Using substr:
-# Since the dates are nice here, each field taking the same number of characters, it is also possible to do:
-# weather$year<-substr(weather$ts,start=1,stop=4)
-# weather$month<-substr(weather$ts,start=6,stop=7)
-# weather$day<-substr(weather$ts,start=9,stop=10)
+weather['year'] = weather['ts'].str[:4]
+weather['month'] = weather['ts'].str[5:7]
+weather['day'] = weather['ts'].str[8:10]
 
-# The other way around: from numeric to character
-# dates<-weather[c("year","month","day")]
-# for(n in names(dates)) dates[[n]]<-as.numeric(dates[[n]])
-# Basically, this is easy using:
-# with(dates,head(paste(year,month,day,sep="-")))
-# paste will stick the parts together, separated by whatever you give as 'sep'. If the parts are not
-# character to  begin with, they will be coerced via 'as.character'
+weather['date'] = pd.to_datetime(weather['year'] + '/' + weather['month'] + '/' + weather['day'])
 
-# Note that this leaves out the filling 0's. There are ways to get them too (see 'format' for example) 
-# but to deal with dates specifically it is best to use the date-time classes
+# Load csv with parse_dates argument to get DateTimeIndex
+weather = pd.read_csv('datasets/weather-kumpula.csv', parse_dates=True, index_col=0)
+# Now we can use masking
+weather[weather > "2014-12-01"]
+# or slicing
+weather[pd.datetime(2014, 6, 25):pd.datetime(2014, 6, 30)]
 
-# names(weather)
-# weather$datetime<-strptime(weather$ts,format="%F")
-# summary(weather)
-# weather$date<-as.Date(weather$datetime)
-# summary(weather)
-# Now getting these back as strings is easy:
-# head(as.character(weather$datetime)) 
-# See also format.Date
 # And PLEASE whenever you have the say, use the ISO 8601 standard...

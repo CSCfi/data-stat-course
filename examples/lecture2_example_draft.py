@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pylab as plt
 from bs4 import BeautifulSoup
 
-API_BASE_URL = 'http://localhost:8000/api/'
+API_BASE_URL = 'http://localhost:5000/api/'
 
 print
 print "Reading and writing in JSON, 101"
@@ -57,8 +57,8 @@ print
 print "Parse response content as JSON",
 response = requests.get(API_BASE_URL).json()
 print "and read parameters from it"
-min_round = response['/api/<round>']['param_min']
-max_round = response['/api/<round>']['param_max']
+min_round = response['/api/round/<round>']['param_min']
+max_round = response['/api/round/<round>']['param_max']
 print "min_round: %s max_round: %s" % (min_round, max_round)
 
 print
@@ -77,8 +77,10 @@ for i in range(min_round, max_round + 1):
     if result:
         results.extend(result)
 
+plt.figure()
 numbers = pd.Series(results)
 numbers.hist(bins=39, normed=True)
+plt.savefig('out.png')
 plt.show()
 
 
