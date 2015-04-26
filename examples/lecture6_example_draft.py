@@ -1,5 +1,8 @@
 #Simple frequencies by group: barplot
 from scipy import stats
+import numpy as np
+import pandas as pd
+from ggplot import *
 import pandas.rpy.common as com
 import matplotlib.pyplot as plt
 
@@ -25,4 +28,13 @@ mt.reindex(np.random.permutation(mt.index))
 mt['NNf'] = pd.Series(mt['NordklimNumber'], dtype="category")
 ggplot(mt, aes('month', 'tempmean')) + geom_point(colour='steelblue')
 ggplot(mt, aes('month', 'tempmean')) + geom_point(colour='steelblue') +facet_wrap("NNf")
+
+x = np.linspace(0,10,50)
+y = 2.5 * x + 1.2
+noise = np.random.randn(y.size)
+noisy = y + noise
+p = np.polyfit(x,noisy,1)
+plt.plot(x, noisy, 'b.')
+plt.plot(x, p[0] * x + p[1],'r-')
+
 
