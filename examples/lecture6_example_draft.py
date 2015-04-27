@@ -1,5 +1,5 @@
 #Simple frequencies by group: barplot
-from scipy import stats
+import scipy
 import numpy as np
 import pandas as pd
 from ggplot import *
@@ -11,8 +11,10 @@ letters = com.load_data('letters')
 
 xk = np.arange(5)
 pk = (0.1, 0.2, 0.25, 0.4, 0.05)
-idxs = stats.rv_discrete(values=(xk, pk)).rvs(size=100)
+idxs = scipy.stats.rv_discrete(values=(xk, pk)).rvs(size=100)
+
 tmp = pd.DataFrame()
+tmp['idxs'] = idxs
 tmp['group'] = LETTERS[idxs]
 plt.figure()
 pd.value_counts(tmp['group'], normalize=True).plot(kind='bar')
@@ -22,6 +24,9 @@ plt.show()
 #stacked or grouped barplots
 tmp['anothergroup'] = letters[np.random.randint(23, 26, 100)]
 pd.crosstab(tmp['group'], tmp['anothergroup']).plot(kind='bar')
+
+tmp['xvar'] = tmp['idxs'] * np.random.randn(100)
+tmp[['group', 'xvar']].groupby('group').boxplot()
 
 mt = pd.read_csv("monthtemps.csv")
 mt.reindex(np.random.permutation(mt.index))

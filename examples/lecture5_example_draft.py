@@ -1,10 +1,11 @@
 import pandas as pd
-nk = pd.read_csv("../datasets/NordklimData.csv", index_column=0)
+import numpy as np
+nk = pd.read_csv("../datasets/NordklimData.csv", index_col=0)
 nks = pd.read_csv("../datasets/NordklimStationCatalogue.csv")
 
 # Subsetting
 nksub = nk[nk['CountryCode'] == 'FIN']
-nksub = nk.query('CountryCode == FIN')
+nksub = nk.query('CountryCode == "FIN"')
 nksub = nk[nk.isin({'CountryCode': ['FIN']}).any(1)]
 
 climate_elements = (101, 111, 112, 113, 121, 122, 123)
@@ -40,8 +41,7 @@ months = {
     "December": 12
 }
 
-for k, v in months.items():
-    nk_rs = nk_rs.replace(dict={"Month": months})
+nk_rs.replace(to_replace={"Month": months}, inplace=True)
 
 nk_rs = nk_rs.pivot_table(values="value", index=["NordklimNumber", "Month"],  columns=["ClimateElement"], aggfunc=np.mean)
 
@@ -53,4 +53,6 @@ cols = {
 
 nk_rs = nk_rs.rename(columns=cols)
 
-nk_rs.iloc[304,]['tempmean'].plot()
+
+for NN in nk["NordklimNumber"].unique():
+    nk_rs.ix[(NN, ), :]["tempmean"].plot

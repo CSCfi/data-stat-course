@@ -106,9 +106,10 @@ weather['day'] = weather['ts'].str[8:10]
 weather['date'] = pd.to_datetime(weather['year'] + '/' + weather['month'] + '/' + weather['day'])
 
 # Load csv with parse_dates argument to get DateTimeIndex
-weather = pd.read_csv('datasets/weather-kumpula.csv', parse_dates=True, index_col=0)
+weather = pd.read_csv('../datasets/weather-kumpula.csv', parse_dates=True, index_col=0)
 # Now we can use masking
-weather[weather > "2014-12-01"]
+
+weather[weather.index > "2014-12-01"]
 # or slicing
 weather[pd.datetime(2014, 6, 25):pd.datetime(2014, 6, 30)]
 
