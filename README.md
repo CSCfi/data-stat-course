@@ -1,1 +1,4 @@
-
+- datascience101.pdf  *Lecture slides*
+- datasets/ *Datasets*
+- examples/ *Lecture examples*
+- exercices/ *Sketches for exercise solutions*
