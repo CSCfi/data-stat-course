@@ -3,11 +3,12 @@ import scipy
 import numpy as np
 import pandas as pd
 from ggplot import *
-import pandas.rpy.common as com
 import matplotlib.pyplot as plt
 
-LETTERS = com.load_data('LETTERS')
-letters = com.load_data('letters')
+
+letters_df = pd.read_csv('../datasets/letters.csv')
+letters = np.array(letters_df['small'])
+LETTERS = np.array(letters_df['capital'])
 
 xk = np.arange(5)
 pk = (0.1, 0.2, 0.25, 0.4, 0.05)

@@ -1,8 +1,8 @@
-#Lecture 3 "Otherwise bad"
+#Lecture 3
 #Ok, you finally managed to read in the data and you have it on your workspace in a data frame
 #What now?
 
-#missing values: in R, the special symbol NA, in pandas...
+#missing values: in R, the special symbol NA
 #data types: in R (most important) numeric, factor, character, maybe boolean
 
 fakedf<-data.frame(stringsAsFactors = FALSE,

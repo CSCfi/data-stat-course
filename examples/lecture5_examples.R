@@ -1,8 +1,8 @@
-#Lecture 5: even more wrangling
+#Lecture 5:
 #Lecture 4 focused on manipulations that deal with single columns at a time. Now let's do things with whole data frmaes
 
-nk<-read.csv("../datasets/NordklimData.csv")
-nks<-read.csv("../datasets/NordklimStationCatalogue.csv")
+nk<-read.csv("NordklimData.csv")
+nks<-read.csv("NordklimStationCatalogue.csv")
 
 
 #Subsetting

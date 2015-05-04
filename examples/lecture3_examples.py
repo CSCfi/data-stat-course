@@ -4,15 +4,16 @@
 
 import pandas as pd
 import numpy as np
-import pandas.rpy.common as com
 import matplotlib
 import matplotlib.pyplot as plt
-matplotlib.style.use('ggplot')
 
 # missing values: in R, the special symbol NA, in pandas...
 # data types: in R (most important) numeric, factor, character, maybe boolean
 
-letters = np.concatenate((com.load_data('letters'), [None]))
+letters_df = pd.read_csv('../datasets/letters.csv')
+letters = np.array(letters_df['small'])
+
+letters = np.concatenate((letters, [None]))
 lettersS = pd.Series(letters)
 lettersC = pd.Series(letters, dtype='category')
 numbers = pd.Series(np.concatenate((range(1, 11), [np.nan])))
@@ -41,7 +42,7 @@ fakedf.describe()
 
 # This will quickly show you if columns turn out to be of wrong type, or if the whole result is bogus.
 # Compare:
-iris = com.load_data('iris')
+iris = pd.read_csv('../datasets/iris.csv')
 iris.to_csv("iris.csv")
 print pd.read_csv("iris.csv").describe()
 print pd.read_csv("iris.csv", sep=';', decimal=',').describe()

@@ -2,14 +2,13 @@
 
 import pandas as pd
 import numpy as np
-import pandas.rpy.common as com
 import matplotlib
 import matplotlib.pyplot as plt
 matplotlib.style.use('ggplot')
 
 
 # Just a reminder, adding new variables to data frames is easy, for example:
-iris = com.load_data('iris')
+iris = pd.read_csv('../datasets/iris.csv')
 iris.columns
 
 iris['Sepal.Area'] = iris['Sepal.Length'] * iris['Sepal.Width']

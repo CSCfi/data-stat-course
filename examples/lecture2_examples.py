@@ -53,7 +53,7 @@ response = requests.get(API_BASE_URL)
 print "Status code: ", response.status_code
 print "Content", response.text
 
-print
+#print
 print "Parse response content as JSON",
 response = requests.get(API_BASE_URL).json()
 print "and read parameters from it"
@@ -66,22 +66,6 @@ print "Retrieve the results for one round:",
 response = requests.get(API_BASE_URL + 'round/%s' % min_round).json()
 result = response.get('result')
 print result
-
-print
-print "Retrieve all results between from round %s to ronud %s" % (min_round, max_round)
-print "Visualize distribution of numbers with histogram"
-results = []
-for i in range(min_round, max_round + 1):
-    response = requests.get(API_BASE_URL + 'round/%s' % (min_round + i)).json()
-    result = response.get('result')
-    if result:
-        results.extend(result)
-
-plt.figure()
-numbers = pd.Series(results)
-numbers.hist(bins=39, normed=True)
-plt.savefig('out.png')
-plt.show()
 
 
 # Scraping

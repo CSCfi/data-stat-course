@@ -8,7 +8,7 @@ weather-kumpula-2014.csv: Derived from the SMEAR data set under CC BY -lisence
 lotto-2000.json: Finnish Lotto numbers since the beginning of the current century
 > Raw data provided by Veikkaus Oy
 
-slurm.csv: Artificial SLURM usage data mimicking real usage data collected at CSC
+broken\_slurm.csv: Artificial SLURM usage data mimicking real usage data collected at CSC
 
 roots\_small.csv: 
 > Repo, T., Sirkiä, S., Heinonen, J., Lavigné, A., Roitto, M.,

@@ -1,4 +1,4 @@
-#Lecture 4: "more wrangling"
+#Lecture 4:
 
 #Just a reminder, adding new variables to data frames is easy, for example:
 data(iris)
@@ -6,7 +6,6 @@ names(iris)
 iris$Sepal.Area<-with(iris,Sepal.Length*Sepal.Width)
 names(iris)
 #Note that this works (only) because row order is fixed.
-#Pandas data frame is smarter in this sense
 
 #Replacing whole columns works the same way.
 #To remove a single column:
@@ -30,11 +29,10 @@ iris<-iris[-match(names(iris),"Sepal.Area")] #pick everything that isn't called.
 #(actually, the function 'subset' would do that too, we'll get back to that later)
 
 
-
 #Binning, or making a continuous variable in to a discrete one
 hist(iris$Sepal.Length)
 range(iris$Sepal.Length)
-iris$SLgroup<-cut(iris$Sepal.Length,breaks=c(0,4,5,7,8),labels=c("small","medium","large"))
+iris$SLgroup<-cut(iris$Sepal.Length,breaks=c(0,4,5,7,8),labels=c("xs","small","medium","large"))
 
 #in to 10 groups of equal width across range:
 intr<-with(iris,seq(min(Sepal.Length),max(Sepal.Length),length.out=11))
@@ -75,7 +73,7 @@ zoo$animgroup<-agroup[zoo$spec]
 
 #Working with time stamps and strings in general
 
-weather<-read.csv("https://raw.githubusercontent.com/CSC-IT-Center-for-Science/data-stat-course/master/datasets/weather-kumpula.csv")
+weather<-read.csv("weather-kumpula.csv")
 
 #time stamp is not numeric, so it becomes a factor by default:
 class(weather$ts)
