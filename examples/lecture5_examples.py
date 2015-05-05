@@ -43,7 +43,13 @@ months = {
 
 nk_rs.replace(to_replace={"Month": months}, inplace=True)
 
-nk_rs = nk_rs.pivot_table(values="value", index=["NordklimNumber", "Month"],  columns=["ClimateElement"], aggfunc=np.mean)
+# Aggregation by columns
+nk_rs[nk_rs["ClimateElement"] == 101].groupby(by=["CountryCode", "Month"]).agg({'FirstYear': 'first', 'value': np.mean})
+
+nk_rs_pivoted = nk_rs.pivot_table(values="value", index=["NordklimNumber", "Month"],  columns=["ClimateElement"], aggfunc=np.mean)
+
+# Other tools to work with MultiIndex objects: stack & unstack
+
 
 cols = {
     101: "tempmean", 111: "maxtempmean", 112: "maxtemphi", 113: "temphiday",
@@ -51,8 +57,8 @@ cols = {
     601: "precipsum", 602: "precipdmax", 701: "snowcover", 801: "cloudmean"
 }
 
-nk_rs = nk_rs.rename(columns=cols)
+nk_rs_pivoted = nk_rs_pivoted.rename(columns=cols)
 
 
 for NN in nk["NordklimNumber"].unique():
-    nk_rs.ix[(NN, ), :]["tempmean"].plot
+    nk_rs_pivoted.ix[(NN, ), :]["tempmean"].plot()
