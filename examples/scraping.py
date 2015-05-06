@@ -18,7 +18,6 @@ headers = {
 for library, search_id in libraries.items():
     html_doc = requests.get(base_url + search_id, headers=headers).text
     soup = BeautifulSoup(html_doc)
-    import pdb; pdb.Pdb().set_trace()
     for x in [[y.text for y in x.findAll('td') if y.text][:2] for x in soup.body.findAll('table')[5].findAll('tr')]:
         if x:
             a, b = x
